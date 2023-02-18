@@ -1,151 +1,29 @@
-import { 先涨后跌, 先跌后涨 } from './fund';
+import axios from 'axios';
 
 /**
- * 给定涨幅, 计算本金历经涨跌后的结果
- * @param list Array<number> [-10, 10]
- * @param principal 本金数额, 单位元
+ * @params secids QuoteID == MktNum.UnifiedCode 多个可以逗号分隔
+ * @returns `{ data: { total: number; diff: Record<number, Result> } }`
  */
-function 给定涨幅和本金(list = [] as Array<number>, principal = 0) {
-    const seedMoney = +principal.toFixed(2);
-    let lrate = 1;
+const ulist = 'https://push2.eastmoney.com/api/qt/ulist/get?secids=1.513310&fields=f1,f2,f3,f4,f5,f6,f7,f8,f10,f12,f13,f14,f18,f30&pi=0';
 
-    for (const rate of list) {
-        lrate *= (1 + rate / 100);
-    }
+/**
+ * @params input 关键词
+ * @params count 搜索条数
+ */
+const suglist = 'https://searchadapter.eastmoney.com/api/suggest/get?input=%E6%98%93%E6%96%B9%E8%BE%BE&count=10&type=14';
 
-    const result = +(seedMoney * lrate).toFixed(2);
-    const delta = +(result - seedMoney).toFixed(2);
+axios.get(ulist).then(res => {
+    console.log(res.data);
+});
 
-    console.log({
-        交易日: list.length,
-        本金: seedMoney,
-        交易结果: result,
-        结果: delta
-    })
-}
+axios.get(suglist).then(res => {
+    console.log(res.data);
+});
 
-先涨后跌(200000, 3);
-先跌后涨(200000, 3);
 
-给定涨幅和本金([
-    // 1周期
-    -0.34, // 2022-02-16
-    +0.96,
-    -0.95,
-    -0.85,
-    +0.74
-
-    // 2周期
-    +5.89,
-    -1.82,
-    +1.03,
-    +0.27,
-    +0.38,
-
-    // 3周期
-    -1.98,
-    -2.35,
-    +1.12,
-    -3.65,
-    +0.46,
-
-    // 4周期
-    +1.03,
-    +1.30,
-    -0.34,
-    -3.03,
-    -2.48,
-
-    // 5周期
-    +4.50,
-    +1.36,
-    -0.78,
-    +0.45,
-    -0.84,
-
-    // 6周期
-    -0.17,
-    -1.81,
-    -1.62,
-    -1.64,
-    -1.73,
-
-    // 7
-    +1.82,
-    -2.44,
-    +0.37,
-    -2.74,
-    -1.38,
-
-    // 8
-    +0.13,
-    -4.63,
-    +0.40,
-    -2.58,
-    +2.38,
-
-    // 9
-    +0.27,
-    +3.51,
-    -2.56,
-    -1.51,
-    -1.67,
-
-    // 10
-    -2.58,
-    -6.47,
-    -3.72,
-    +6.72,
-    -2.17,
-
-    // 11
-    +3.26,
-    -0.22,
-    -2.95,
-    -1.55,
-    +4.74,
-
-    // 12
-    +3.73,
-    +1.25,
-    -0.62,
-    -1.31,
-    +4.32,
-
-    // 13
-    +0.47,
-    +1.13,
-    +0.53,
-    +1.31,
-    -3.87,
-
-    // 14
-    -0.27,
-    -1.08,
-    -0.75,
-    +1.85,
-    +2.69,
-
-    // 15
-    +0.39,
-    +3.85,
-    +2.01,
-    -1.60,
-    -0.19,
-
-    // 16
-    -3.52,
-    +1.11,
-    -1.48,
-    -2.16,
-    +1.27,
-
-    // 17
-    +0.92,
-    +0.00,
-    +1.96,
-    -1.41,
-    -3.38, // 2022-06-22
-
-    // 18
-], 200000);
+/**
+ * @params field1 必须存在占位
+ * @params iscr 是否包含9.15~9.30开盘前的数据，可以知道今天是高开还是低开
+ * trends2 -> trends1 | trends 可以获取 对象数组,数据更详细
+ */
+const url = 'https://push2.eastmoney.com/api/qt/stock/trends2/get?secid=1.513310&fields2=f51,f53,f54,f55,f56,f57,f58&iscr=0&fields1=f1';
